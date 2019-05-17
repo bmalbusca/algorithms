@@ -41,7 +41,6 @@ struct _matrix_def{
 	int k_turns;
 
 	int pairs_numbers;
-	int max_path_size;
 	turn ** path; 
 	int ** matrix;
 };
@@ -902,8 +901,8 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 
-		for(l =0; l < data->lines  ; ++l){
-			for(c =0; c < data->columns ; ++c){
+		for(l =0; l < data->lines && length < ((data->lines * data->columns) -1) ; ++l){
+			for(c =0; c < data->columns && length < ((data->lines * data->columns)); ++c){
 
 				//  printf("cell (%i,%i) \n",l,c);
 
@@ -924,6 +923,11 @@ pto visited_check(turn ** visited, int k,int id){
 						//printf("Encontrou novo caminho %i \n", length);
 						save_path(max_path,path,data->k_turns);
 						//print_array(path, data->k_turns);
+						
+						if(length == data->pairs_numbers -1){
+							break;	
+						}
+
 
 					}
 
@@ -970,8 +974,8 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 
-		for(l =0; l < data->lines && (length < data->pairs_numbers ) && length < data->max_path_size ; ++l){
-			for(c =0; c < data->columns &&  (length < data->pairs_numbers) && length < data->max_path_size ; ++c){
+		for(l =0; l < data->lines && (length < data->pairs_numbers ) && length <((data->lines * data->columns) - 1); ++l){
+			for(c =0; c < data->columns &&  (length < data->pairs_numbers) && length < ((data->lines * data->columns) - 1); ++c){
 
 				//	printf("cell (%i,%i) \n",l,c);
 
@@ -1097,8 +1101,7 @@ pto visited_check(turn ** visited, int k,int id){
 		int i =0, j=0, fl =0;
 		int ** matrix_ = NULL;	
 
-		data->pairs_numbers =0 ;
-		data->max_path_size = (data->lines * data->columns) - 1;
+		data->pairs_numbers =0;
 		matrix_ = data->matrix;
 
 		if(matrix_ == NULL){ 
@@ -1124,6 +1127,51 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 
+	/*
+	 *	FUNCTION:  	 fill_matrix
+	 *	ARGS:		 FILE * , matrix_data *
+	 *	RETURN:		 
+	 *	DESCRIPTION:  	 Allocate memory for the matrix data
+	 */
+
+
+	void  fill_matrix_smart (FILE * ptr, matrix_data * data){
+
+		int i =0, j=0, fl =0;
+		int bucket = 0;
+		int ** matrix_ = NULL;	
+
+		matrix_ = data->matrix;
+
+		if(matrix_ == NULL){ 
+			printf("*ERROR* Need memory allocation: fill_matrix() \n");
+			exit(0); }
+
+		for (i = 0; i <data->lines; i++) {
+				
+			//printf("line %i vs %i \n",i,data->l0 - (2*data->k) );
+				if( (i > (data->l0 - (2*data->k))) && (i <  (data->l0 + (2*data->k))) ){
+					matrix_[i] = (int *)calloc((data->columns),sizeof(int));}
+				else{
+					matrix_[i] = NULL;
+				}
+			
+			for (j = 0; (j < data->columns) && fl >-1; j++) {
+				
+				if( (i > (data->l0 - (2*data->k))) && (i <  (data->l0 + (2*data->k))) ){
+					fl =fscanf(ptr, "%d", &matrix_[i][j]);
+				}
+				else{
+					fl =fscanf(ptr, "%d", &bucket);
+				}
+							//	else{printf(" %i ",matrix_[i][j]);}
+			}
+			//	printf("\n");
+		}
+
+	//	printf("Readed: %i pair numbers \n",(data->pairs_numbers));
+	//printf("DONE \n");
+	}
 
 
 	pto crescente(int val1, int val2){
@@ -1173,7 +1221,7 @@ pto visited_check(turn ** visited, int k,int id){
 				if (intial_coordinates(data) == NULL || k_validation(data) == NULL){
 					return NULL;	}
 				allocation_matrix(data);
-				fill_matrix(ptr,data);	
+				fill_matrix_smart(ptr,data);	
 				option_A(data);
 				break; 
 			case 'B': 
@@ -1181,7 +1229,7 @@ pto visited_check(turn ** visited, int k,int id){
 				if (intial_coordinates(data) == NULL || k_validation(data) == NULL){
 					return NULL;	}
 				allocation_matrix(data);
-				fill_matrix(ptr,data);	
+				fill_matrix_smart(ptr,data);	
 				option_(data);
 				break;
 			case 'C': 
