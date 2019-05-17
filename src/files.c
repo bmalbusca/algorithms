@@ -879,9 +879,7 @@ void save_path (turn ** master_path, turn ** found_path, int k){
 
 
 
-
-
-
+    
 
     void  option_E(matrix_data * data){
 
@@ -890,10 +888,8 @@ void save_path (turn ** master_path, turn ** found_path, int k){
         turn ** path = NULL;
         turn ** max_path = NULL;
 
-        path = (turn **)malloc((data->lines * data->columns)-1 * sizeof(turn*)); // fazer alocacao para o maximo de passos
-        max_path = (turn **)calloc((data->lines * data->columns)-1 , sizeof(turn*)); // fazer alocacao para o maximo de passos
-        
-        //initalize_path(max_path,(data->lines * data->columns)-1 );
+        path = (turn **)calloc((data->lines * data->columns)-1, sizeof(turn*)); // fazer alocacao para o maximo de passos
+        max_path = (turn **)calloc((data->lines * data->columns)-1, sizeof(turn*)); // fazer alocacao para o maximo de passos
 
         if(path == NULL){
             printf("*ERROR* Memory allocation failed: DFS() \n");
@@ -906,10 +902,10 @@ void save_path (turn ** master_path, turn ** found_path, int k){
         for(l =0; l < data->lines  ; ++l){
             for(c =0; c < data->columns ; ++c){
 
-                //	printf("cell (%i,%i) \n",l,c);
+                //  printf("cell (%i,%i) \n",l,c);
 
                 path[0]= insert_edge(l,c, ADDR(matrix_[l][c])); /* starting point */
-                data->k_turns = 0; 	
+                data->k_turns = 0;  
 
                 while(data->k_turns >= 0){
 
@@ -919,8 +915,8 @@ void save_path (turn ** master_path, turn ** found_path, int k){
 
                     if(data->k_turns > length){
                         length = data->k_turns;
-                        data->l0 = path[0]->l;		/* update the starting point */
-                        data->c0 = path[0]->c;	
+                        data->l0 = path[0]->l;      /* update the starting point */
+                        data->c0 = path[0]->c;  
 
                         //printf("Encontrou novo caminho %i \n", length);
                         save_path(max_path,path,data->k_turns);
@@ -928,7 +924,7 @@ void save_path (turn ** master_path, turn ** found_path, int k){
 
                     }
 
-                    if(path[data->k_turns] != NULL){	
+                    if(path[data->k_turns] != NULL){    
                         remove_path(path[data->k_turns]);
                     }
 
@@ -944,10 +940,10 @@ void save_path (turn ** master_path, turn ** found_path, int k){
 
         /* fazer aqui o free do path*/
 
-        //	printf("*FREE* Vai sair da opcao E %i\n",data->k_turns);
+        //  printf("*FREE* Vai sair da opcao E %i\n",data->k_turns);
         //print_array(path, data->k_turns);
         free_path(path, data->k_turns);
-        //	printf("Fez free DONE - length %i\n",length);
+        //  printf("Fez free DONE - length %i\n",length);
         data->k_turns = length;
     }
 
