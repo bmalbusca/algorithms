@@ -41,6 +41,7 @@ struct _matrix_def{
 	int k_turns;
 
 	int pairs_numbers;
+
 	turn ** path; 
 	int ** matrix;
 };
@@ -527,7 +528,7 @@ pto visited_check(turn ** visited, int k,int id){
 
 	void print_array(turn ** array, int l ){
 		int i = 0;
-		printf(" array %p %p %p \n",array, array[0],array[i]->val);	
+		//printf(" array %p %p %p \n",array, array[0],array[i]->val);	
 		for(i = l; i >= 0 ; --i){
 
 			printf("(%i) %i |",i,ADDR_TO_VAL(array[i]->val));
@@ -907,7 +908,7 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 
-		for(l =0; l < data->lines && length < ((data->lines * data->columns) -1) ; ++l){
+		for(l =0; l < data->lines && length < ((data->lines * data->columns) ) ; ++l){
 			for(c =0; c < data->columns && length < ((data->lines * data->columns)); ++c){
 
 				//  printf("cell (%i,%i) \n",l,c);
@@ -930,7 +931,7 @@ pto visited_check(turn ** visited, int k,int id){
 						save_path(max_path,path,data->k_turns);
 						//print_array(path, data->k_turns);
 						
-						if(length == data->pairs_numbers -1){
+						if(length == ((data->lines * data->columns)-1)){
 							break;	
 						}
 
@@ -977,12 +978,13 @@ pto visited_check(turn ** visited, int k,int id){
 			exit(0);
 		}
 
+							//printf("size: %i  npairs: %i \n", (data->lines * data->columns), data->pairs_numbers);
 
 
 
 		//printf("Entrou option_F \n");
-		for(l =0; l < data->lines && (length < data->pairs_numbers ) && length <((data->lines * data->columns) - 1); ++l){
-			for(c =0; c < data->columns &&  (length < data->pairs_numbers) && length < ((data->lines * data->columns) - 1); ++c){
+		for(l =0; l < data->lines && (length < data->pairs_numbers ) && length <((data->lines * data->columns)-1); ++l){
+			for(c =0; c < data->columns &&  (length < data->pairs_numbers) && length < ((data->lines * data->columns)-1); ++c){
 
 				//	printf("cell (%i,%i) \n",l,c);
 
@@ -997,6 +999,8 @@ pto visited_check(turn ** visited, int k,int id){
 
 					if(data->k_turns > length){
 						
+						//printf(" length: %i\n",length );
+
 						length = data->k_turns;
 						data->l0 = path[0]->l;		/* update the starting point */
 						data->c0 = path[0]->c;	
@@ -1004,15 +1008,26 @@ pto visited_check(turn ** visited, int k,int id){
 						//printf(" %i %i Encontrou novo caminho %i - %i \n", path[0]->l,path[0]->c,length, ADDR_TO_VAL(path[0]->val));
 						save_path(max_path,path,data->k_turns);
 
-						if(length == data->pairs_numbers -1){
-							//printf("Maximo\n");
-							//print_array(max_path, length);
+							
+						if((data->lines * data->columns) == data->pairs_numbers && length == data->pairs_numbers -1){
+							//printf("Maximo %i \n", data->pairs_numbers);
+
 							data->path = max_path;
-							//free_path(path, data->k_turns);
-		//printf("Fez free DONE - length %i\n",length);
 							data->k_turns = length;
 							
 							return;	
+						}
+						else{
+
+								if(length == data->pairs_numbers || length == ((data->lines * data->columns)-1)){
+									
+									data->path = max_path;
+									data->k_turns = length;
+							
+									return;	
+
+								}
+
 						}
 					}
 
