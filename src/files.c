@@ -930,7 +930,7 @@ pto visited_check(turn ** visited, int k,int id){
 						//printf("Encontrou novo caminho %i \n", length);
 						save_path(max_path,path,data->k_turns);
 						//print_array(path, data->k_turns);
-						
+
 						if(length == ((data->lines * data->columns)-1)){
 							break;	
 						}
@@ -978,7 +978,7 @@ pto visited_check(turn ** visited, int k,int id){
 			exit(0);
 		}
 
-							//printf("size: %i  npairs: %i \n", (data->lines * data->columns), data->pairs_numbers);
+		//printf("size: %i  npairs: %i \n", (data->lines * data->columns), data->pairs_numbers);
 
 
 
@@ -998,7 +998,7 @@ pto visited_check(turn ** visited, int k,int id){
 					//print_array(path, data->k_turns);
 
 					if(data->k_turns > length){
-						
+
 						//printf(" length: %i\n",length );
 
 						length = data->k_turns;
@@ -1008,25 +1008,25 @@ pto visited_check(turn ** visited, int k,int id){
 						//printf(" %i %i Encontrou novo caminho %i - %i \n", path[0]->l,path[0]->c,length, ADDR_TO_VAL(path[0]->val));
 						save_path(max_path,path,data->k_turns);
 
-							
+
 						if((data->lines * data->columns) == data->pairs_numbers && length == data->pairs_numbers -1){
 							//printf("Maximo %i \n", data->pairs_numbers);
 
 							data->path = max_path;
 							data->k_turns = length;
-							
-							return;	
+
+							break;	
 						}
 						else{
 
-								if(length == data->pairs_numbers || length == ((data->lines * data->columns)-1)){
-									
-									data->path = max_path;
-									data->k_turns = length;
-							
-									return;	
+							if(length == data->pairs_numbers || length == ((data->lines * data->columns)-1)){
 
-								}
+								data->path = max_path;
+								data->k_turns = length;
+
+								break;	
+
+							}
 
 						}
 					}
@@ -1058,7 +1058,7 @@ pto visited_check(turn ** visited, int k,int id){
 		data->k_turns = length;
 
 		//printf("vai sair da funcao F\n");
-}
+	}
 
 
 
@@ -1148,17 +1148,17 @@ pto visited_check(turn ** visited, int k,int id){
 			matrix_[i] = (int *)calloc((data->columns),sizeof(int));
 			for (j = 0; (j < data->columns) && fl >-1; j++) {
 				fl =fscanf(ptr, "%d", &matrix_[i][j]);
-				
+
 				if((matrix_[i][j])%2 ==0){
 					(data->pairs_numbers)++; 
-				//		printf(" (%i) ",matrix_[i][j]);
+					//		printf(" (%i) ",matrix_[i][j]);
 				}
-			//	else{printf(" %i ",matrix_[i][j]);}
+				//	else{printf(" %i ",matrix_[i][j]);}
 			}
 			//	printf("\n");
 		}
 
-	//	printf("Readed: %i pair numbers \n",(data->pairs_numbers));
+		//	printf("Readed: %i pair numbers \n",(data->pairs_numbers));
 	}
 
 
@@ -1184,29 +1184,29 @@ pto visited_check(turn ** visited, int k,int id){
 			exit(0); }
 
 		for (i = 0; i <data->lines; i++) {
-				
+
 			//printf("line %i vs %i \n",i,data->l0 - (2*data->k) );
-				if( (i > (data->l0 - (2*data->k))) && (i <  (data->l0 + (2*data->k))) ){
-					matrix_[i] = (int *)calloc((data->columns),sizeof(int));}
-				else{
-					matrix_[i] = NULL;
-				}
-			
+			if( (i > (data->l0 - (2*data->k))) && (i <  (data->l0 + (2*data->k))) ){
+				matrix_[i] = (int *)calloc((data->columns),sizeof(int));}
+			else{
+				matrix_[i] = NULL;
+			}
+
 			for (j = 0; (j < data->columns) && fl >-1; j++) {
-				
+
 				if( (i > (data->l0 - (2*data->k))) && (i <  (data->l0 + (2*data->k))) ){
 					fl =fscanf(ptr, "%d", &matrix_[i][j]);
 				}
 				else{
 					fl =fscanf(ptr, "%d", &bucket);
 				}
-							//	else{printf(" %i ",matrix_[i][j]);}
+				//	else{printf(" %i ",matrix_[i][j]);}
 			}
 			//	printf("\n");
 		}
 
-	//	printf("Readed: %i pair numbers \n",(data->pairs_numbers));
-	//printf("DONE \n");
+		//	printf("Readed: %i pair numbers \n",(data->pairs_numbers));
+		//printf("DONE \n");
 	}
 
 
