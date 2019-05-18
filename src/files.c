@@ -526,9 +526,11 @@ pto visited_check(turn ** visited, int k,int id){
 	}
 
 	void print_array(turn ** array, int l ){
-		int i;
+		int i = 0;
+		printf(" array %p %p %p \n",array, array[0],array[i]->val);	
 		for(i = l; i >= 0 ; --i){
-			printf(" %i |",ADDR_TO_VAL(array[i]->val));
+
+			printf("(%i) %i |",i,ADDR_TO_VAL(array[i]->val));
 		}
 		printf(" - turns %i \n",l);
 	}
@@ -798,11 +800,14 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 			//printf("i:%i path[i]: %p \n",i,master_path[i]);
+			memmove(master_path[i], found_path[i], sizeof(turn));
+			//master_path[i]->l=  found_path[i]->l; 
+			//master_path[i]->c = found_path[i]->c; 
+			//master_path[i]->val = found_path[i]->val;
 
-			master_path[i]->l=  found_path[i]->l; 
-			master_path[i]->c = found_path[i]->c; 
-			master_path[i]->val = found_path[i]->val; 	 
 			master_path[i]->adj = NULL;
+
+			//printf("%i - val %i ptr %p\n",i,ADDR_TO_VAL(master_path[i]->val),master_path[i]->val );
 
 		}
 
@@ -834,7 +839,8 @@ pto visited_check(turn ** visited, int k,int id){
 					if( move(l,c,l0,c0, data) != NULL){	
 						//	printf("val  %i vs %i matrix \n",val,matrix_[l][c]);
 
-						/* check is this position is valid !  and not path*/												if( (cond(val,matrix_[l][c],&val) != NULL) /* && (exists_in_path(path,k,l,c)==NULL)*/){  /* check condition for be a edge */
+						/* check is this position is valid !  and not path*/
+						if( (cond(val,matrix_[l][c],&val) != NULL) /* && (exists_in_path(path,k,l,c)==NULL)*/){  /* check condition for be a edge */
 							if((exists_in_path(path,k,l,c)==NULL)){
 								path[k]->adj[id]= (pto)VISITED; 	/*add a path tag */	
 								k++;					/* found a new edge */	
@@ -963,8 +969,8 @@ pto visited_check(turn ** visited, int k,int id){
 		turn ** path = NULL;
 		turn ** max_path = NULL;
 
-		path = (turn **)calloc((data->lines * data->columns)-1, sizeof(turn*)); // fazer alocacao para o maximo de passos
-		max_path = (turn **)calloc((data->lines * data->columns)-1, sizeof(turn*)); // fazer alocacao para o maximo de passos
+		path = (turn **)calloc((data->lines * data->columns), sizeof(turn*)); // fazer alocacao para o maximo de passos
+		max_path = (turn **)calloc((data->lines * data->columns), sizeof(turn*)); // fazer alocacao para o maximo de passos
 
 		if(path == NULL){
 			printf("*ERROR* Memory allocation failed: DFS() \n");
@@ -974,6 +980,7 @@ pto visited_check(turn ** visited, int k,int id){
 
 
 
+		//printf("Entrou option_F \n");
 		for(l =0; l < data->lines && (length < data->pairs_numbers ) && length <((data->lines * data->columns) - 1); ++l){
 			for(c =0; c < data->columns &&  (length < data->pairs_numbers) && length < ((data->lines * data->columns) - 1); ++c){
 
@@ -981,7 +988,7 @@ pto visited_check(turn ** visited, int k,int id){
 
 				path[0]= insert_edge(l,c, ADDR(matrix_[l][c])); /* starting point */
 				data->k_turns = 0; 	
-
+				//printf("atribui path[0]\n ");
 				while(data->k_turns >= 0){
 
 
@@ -989,20 +996,30 @@ pto visited_check(turn ** visited, int k,int id){
 					//print_array(path, data->k_turns);
 
 					if(data->k_turns > length){
+						
 						length = data->k_turns;
 						data->l0 = path[0]->l;		/* update the starting point */
 						data->c0 = path[0]->c;	
 
-						//printf("Encontrou novo caminho %i \n", length);
+						//printf(" %i %i Encontrou novo caminho %i - %i \n", path[0]->l,path[0]->c,length, ADDR_TO_VAL(path[0]->val));
 						save_path(max_path,path,data->k_turns);
 
 						if(length == data->pairs_numbers -1){
-							break;	
+							//printf("Maximo\n");
+							//print_array(max_path, length);
+							data->path = max_path;
+							//free_path(path, data->k_turns);
+		//printf("Fez free DONE - length %i\n",length);
+							data->k_turns = length;
+							
+							return;	
 						}
 					}
 
 					if(path[data->k_turns] != NULL){	
+						//printf("Removing elment\n");
 						remove_path(path[data->k_turns]);
+						//printf("DONE removing \n");
 					}
 
 					data->k_turns--; 
@@ -1012,17 +1029,21 @@ pto visited_check(turn ** visited, int k,int id){
 
 			}
 		}
+		//print_array(path, length);
+		//printf("DONE path \n");
 		data->path = max_path;
 		//data->k_turns = length;
 
 		/* fazer aqui o free do path*/
 
-		//	printf("*FREE* Vai sair da opcao E %i\n",data->k_turns);
+		//printf("*FREE* Vai sair da opcao F %i\n",data->k_turns);
 		//print_array(path, data->k_turns);
 		free_path(path, data->k_turns);
-		//	printf("Fez free DONE - length %i\n",length);
+		//printf("Fez free DONE - length %i\n",length);
 		data->k_turns = length;
-	}
+
+		//printf("vai sair da funcao F\n");
+}
 
 
 
@@ -1269,7 +1290,9 @@ pto visited_check(turn ** visited, int k,int id){
 				//printf("Op D filled\n");
 				fill_matrix(ptr,data);
 				option_F(data);
-				//printf("Op D DONE\n ");
+
+
+				//printf("Op F DONE: %i %i %i %i \n", data->l0,data->c0,data->k,data->k_turns);
 				break;
 
 
@@ -1316,9 +1339,13 @@ pto visited_check(turn ** visited, int k,int id){
 
 			if(return_val == N_VARS && option_validation(data,ptr) != NULL){
 				write_file(ptw,name_out,data);
+				//printf(" escreveu cabecalho\n");
 				write_path(ptw,data);
+				//printf("escreveu caminho\n");
 				free_path(data->path, data->k_turns);
+				//printf("free data->path\n");
 				free_matrix(data);
+				//printf(" free data\n");
 
 
 			}
